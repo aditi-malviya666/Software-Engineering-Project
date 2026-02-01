@@ -11,7 +11,7 @@ const pool = postgres({
   password: process.env.POSTGRES_PASSWORD!,
 });
 
-// export const db = drizzle(pool);
+export const db = drizzle(pool);
 
 declare global {
   var _db: ReturnType<typeof drizzle> | undefined;
