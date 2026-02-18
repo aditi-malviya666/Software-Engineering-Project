@@ -3,6 +3,9 @@ import { questionPapers } from "./questionPapers";
 import { InferSelectModel } from "drizzle-orm";
 import { users } from "./auth-schema";
 
+/**
+ * TestSession tracks individual test attempts by users.
+ */
 export const testSessions = pgTable("test_sessions", {
   id: uuid().primaryKey().defaultRandom(),
   qpId: uuid().references(() => questionPapers.id, { onDelete: "cascade" }),
