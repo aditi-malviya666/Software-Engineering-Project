@@ -19,4 +19,4 @@ export const questions = pgTable("questions", {
   solution: text(),
 });
 
-export type QuestionPaper = InferSelectModel<typeof questionPapers>;
+export type Question = InferSelectModel<typeof questions>;
