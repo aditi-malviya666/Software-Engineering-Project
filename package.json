@@ -1,6 +1,7 @@
 {
-  "name": "my-app",
+  "name": "software-engineering-project",
   "version": "0.1.0",
+  "description": "Adaptive Test Generator and Onboarding Engine",
   "type": "module",
   "private": true,
   "scripts": {
@@ -8,6 +9,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,md}\"",
     "update": "pnpm install && pnpm drizzle-kit push"
   },
   "dependencies": {
