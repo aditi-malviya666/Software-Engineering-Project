@@ -4,6 +4,12 @@ import { useState, useEffect } from "react";
 
 type AppState = "setup" | "generating" | "ready" | "testing" | "results";
 
+export interface Question {
+  question: string;
+  options?: string[];
+  correctAnswer?: string;
+}
+
 export default function TestGenerator() {
   const [apiKey, setApiKey] = useState("");
   const [examName, setExamName] = useState("JEE");
@@ -25,7 +31,7 @@ export default function TestGenerator() {
   }, [examName, generationType, subject]);
 
   const [appState, setAppState] = useState<AppState>("setup");
-  const [questions, setQuestions] = useState<any[]>([]);
+  const [questions, setQuestions] = useState<Question[]>([]);
   const [error, setError] = useState("");
 
   const [userAnswers, setUserAnswers] = useState<Record<number, string>>({});
