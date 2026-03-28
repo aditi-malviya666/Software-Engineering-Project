@@ -10,6 +10,16 @@ export interface Question {
   correctAnswer?: string;
 }
 
+export interface ScoreData {
+  marks: number;
+  correct: number;
+  incorrect: number;
+  unattempted: number;
+  correctMark: number;
+  incorrectMark: number;
+  maxMarks: number;
+}
+
 export default function TestGenerator() {
   const [apiKey, setApiKey] = useState("");
   const [examName, setExamName] = useState("JEE");
@@ -35,7 +45,7 @@ export default function TestGenerator() {
   const [error, setError] = useState("");
 
   const [userAnswers, setUserAnswers] = useState<Record<number, string>>({});
-  const [scoreData, setScoreData] = useState({ marks: 0, correct: 0, incorrect: 0, unattempted: 0, correctMark: 4, incorrectMark: 1, maxMarks: 20 });
+  const [scoreData, setScoreData] = useState<ScoreData>({ marks: 0, correct: 0, incorrect: 0, unattempted: 0, correctMark: 4, incorrectMark: 1, maxMarks: 20 });
 
   const handleGenerate = async (e: React.FormEvent) => {
     e.preventDefault();
