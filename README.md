@@ -1,9 +1,9 @@
 # Installation Instructions
 
-Ensure you have the following prequisites:
-- (Docker)[https://docs.docker.com/engine/install/]
-- (NodeJS)[https://nodejs.org/en/download]
-- (pnpm)[https://pnpm.io/installation]
+Ensure you have the following prerequisites:
+- [Docker](https://docs.docker.com/engine/install/)
+- [NodeJS](https://nodejs.org/en/download)
+- [pnpm](https://pnpm.io/installation)
 
 1. Open a terminal on the directory you wish to install this project in
 2. Run `git clone https://github.com/aditi-malviya666/Software-Engineering-Project` and wait for the process to complete
