@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TCAS — Model 2 Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+  
+  <style>
+    :root {
+      --bg:        #0d0f14;
+      --surface:   #13161e;
+      --surface2:  #1a1e29;
+      --border:    rgba(255,255,255,0.07);
+      --border2:   rgba(255,255,255,0.13);
+      --text:      #eef0f6;
+      --muted:     #6b7280;
+      --accent:    #4f8ef7;
+      --accent2:   #7c5cfc;
+      --green:     #34d399;
+      --red:       #f87171;
+      --amber:     #fbbf24;
+      --font-head: 'Syne', sans-serif;
+      --font-body: 'DM Sans', sans-serif;
+      --radius:    12px;
+      --radius-sm: 8px;
+    }
+ 
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+ 
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 14px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+ 
+    /* ── Layout ── */
+    .app { display: flex; min-height: 100vh; }
+ 
+    .sidebar {
+      width: 260px;
+      flex-shrink: 0;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 2rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+    }
+ 
+    .logo {
+      font-family: var(--font-head);
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text);
+    }
+    .logo span { color: var(--accent); }
+ 
+    .logo-sub {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 2px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+ 
+    .nav-label {
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+ 
+    .status-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--red);
+      display: inline-block;
+      margin-right: 6px;
+    }
+    .status-dot.online { background: var(--green); animation: pulse 2s infinite; }
+ 
+    @keyframes pulse {
+      0%,100% { opacity: 1; } 50% { opacity: 0.4; }
+    }
+ 
+    .api-status {
+      font-size: 12px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+    }
+ 
+    .api-url-input {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border2);
+      border-radius: var(--radius-sm);
+      padding: 8px 10px;
+      color: var(--text);
+      font-family: monospace;
+      font-size: 12px;
+      margin-top: 8px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .api-url-input:focus { border-color: var(--accent); }
+ 
+    .main { flex: 1; padding: 2.5rem; overflow-y: auto; }
+ 
+    .page-header {
+      margin-bottom: 2rem;
+      animation: fadeUp 0.4s ease both;
+    }
+ 
+    .page-title {
+      font-family: var(--font-head);
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      color: var(--text);
+    }
+    .page-sub { color: var(--muted); font-size: 13px; margin-top: 4px; }
+ 
+    /* ── Input section ── */
+    .input-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      animation: fadeUp 0.4s ease 0.1s both;
+    }
+ 
+    .card-title {
+      font-family: var(--font-head);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 1rem;
+    }
+ 
+    .input-row { display: flex; gap: 10px; margin-bottom: 10px; }
+ 
+    .field-group { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+    .field-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+ 
+    input[type="text"], input[type="number"], select, textarea {
+      background: var(--surface2);
+      border: 1px solid var(--border2);
+      border-radius: var(--radius-sm);
+      padding: 9px 12px;
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.2s;
+      width: 100%;
+    }
+    input:focus, select:focus, textarea:focus { border-color: var(--accent); }
+    select option { background: var(--surface2); }
+ 
+    textarea {
+      font-family: monospace;
+      font-size: 12px;
+      resize: vertical;
+      min-height: 140px;
+    }
+ 
+    .btn {
+      padding: 10px 24px;
+      border-radius: var(--radius-sm);
+      border: none;
+      font-family: var(--font-head);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      letter-spacing: 0.02em;
+    }
+ 
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+    .btn-primary:hover { background: #3a7ee8; transform: translateY(-1px); }
+    .btn-primary:active { transform: translateY(0); }
+    .btn-primary:disabled { background: var(--muted); cursor: not-allowed; transform: none; }
+ 
+    .btn-ghost {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--border2);
+    }
+    .btn-ghost:hover { color: var(--text); border-color: var(--border2); background: var(--surface2); }
+ 
+    .btn-row { display: flex; gap: 10px; align-items: center; margin-top: 12px; }
+ 
+    /* ── Metrics grid ── */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+      gap: 12px;
+      margin-bottom: 1.5rem;
+      animation: fadeUp 0.4s ease 0.2s both;
+    }
+ 
+    .metric-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.2rem 1.3rem;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+    .metric-card:hover { border-color: var(--border2); }
+ 
+    .metric-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      border-radius: 99px;
+    }
+    .metric-card.blue::before  { background: var(--accent); }
+    .metric-card.green::before { background: var(--green); }
+    .metric-card.red::before   { background: var(--red); }
+    .metric-card.amber::before { background: var(--amber); }
+ 
+    .metric-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
+    .metric-value { font-family: var(--font-head); font-size: 28px; font-weight: 700; letter-spacing: -0.03em; }
+    .metric-value.blue  { color: var(--accent); }
+    .metric-value.green { color: var(--green); }
+    .metric-value.red   { color: var(--red); }
+    .metric-value.amber { color: var(--amber); }
+    .metric-sub { font-size: 11px; color: var(--muted); margin-top: 4px; }
+ 
+    /* ── Charts row ── */
+    .charts-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.2rem;
+      margin-bottom: 1.5rem;
+      animation: fadeUp 0.4s ease 0.3s both;
+    }
+ 
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.4rem;
+    }
+ 
+    /* ── Topic bars ── */
+    .topic-list { display: flex; flex-direction: column; gap: 12px; margin-top: 4px; }
+ 
+    .topic-row { display: flex; flex-direction: column; gap: 5px; }
+    .topic-meta { display: flex; justify-content: space-between; align-items: center; }
+    .topic-name { font-size: 13px; font-weight: 500; color: var(--text); }
+    .topic-right { display: flex; align-items: center; gap: 8px; }
+    .topic-pct { font-family: var(--font-head); font-size: 13px; font-weight: 600; }
+    .topic-time { font-size: 11px; color: var(--muted); }
+ 
+    .bar-track {
+      height: 6px;
+      background: var(--surface2);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .bar-fill {
+      height: 100%;
+      border-radius: 99px;
+      transition: width 1s cubic-bezier(0.4,0,0.2,1);
+    }
+ 
+    .badge {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 99px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .badge-weak   { background: rgba(248,113,113,0.15); color: var(--red); }
+    .badge-ok     { background: rgba(52,211,153,0.15);  color: var(--green); }
+    .badge-strong { background: rgba(79,142,247,0.15);  color: var(--accent); }
+ 
+    /* ── Tips ── */
+    .tips-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 10px;
+      margin-top: 4px;
+    }
+ 
+    .tip-item {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      transition: border-color 0.2s;
+    }
+    .tip-item:hover { border-color: var(--border2); }
+ 
+    .tip-icon {
+      width: 28px; height: 28px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+    .tip-icon.blue  { background: rgba(79,142,247,0.15); }
+    .tip-icon.green { background: rgba(52,211,153,0.15); }
+    .tip-icon.red   { background: rgba(248,113,113,0.15); }
+    .tip-icon.amber { background: rgba(251,191,36,0.15); }
+ 
+    .tip-text { font-size: 12px; color: var(--muted); line-height: 1.6; }
+ 
+    /* ── Trend badge ── */
+    .trend-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 99px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .trend-improving { background: rgba(52,211,153,0.15); color: var(--green); }
+    .trend-declining  { background: rgba(248,113,113,0.15); color: var(--red); }
+    .trend-stable     { background: rgba(251,191,36,0.15);  color: var(--amber); }
+    .trend-insufficient_data { background: var(--surface2); color: var(--muted); }
+ 
+    /* ── Empty / loading states ── */
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      color: var(--muted);
+    }
+    .empty-icon { font-size: 36px; margin-bottom: 12px; opacity: 0.4; }
+    .empty-text { font-size: 14px; }
+ 
+    .loader {
+      display: inline-block;
+      width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,0.1);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+ 
+    .error-bar {
+      background: rgba(248,113,113,0.12);
+      border: 1px solid rgba(248,113,113,0.3);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      color: var(--red);
+      font-size: 13px;
+      margin-bottom: 1rem;
+      display: none;
+    }
+ 
+    /* ── JSON viewer ── */
+    .json-viewer {
+      background: var(--surface2);
+      border-radius: var(--radius-sm);
+      padding: 1rem;
+      font-family: monospace;
+      font-size: 11px;
+      color: #a9b1d6;
+      overflow-x: auto;
+      max-height: 300px;
+      overflow-y: auto;
+      line-height: 1.7;
+      margin-top: 8px;
+      display: none;
+    }
+ 
+    /* ── Results section ── */
+    #results { display: none; }
+    #results.visible { display: block; }
+ 
+    /* ── Animations ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+ 
+    .results-anim { animation: fadeUp 0.5s ease both; }
+ 
+    /* ── Divider ── */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 1.5rem 0;
+    }
+ 
+    /* ── Section header ── */
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    .section-title {
+      font-family: var(--font-head);
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+    }
+ 
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 99px; }
+ 
+    @media (max-width: 900px) {
+      .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+      .charts-row   { grid-template-columns: 1fr; }
+      .tips-grid    { grid-template-columns: 1fr; }
+      .sidebar      { display: none; }
+    }
+  </style>
+</head>
+<body>
+ 
+<div class="app">
+ 
+  <!-- ── Sidebar ── -->
+  <aside class="sidebar">
+    <div>
+      <div class="logo">TCAS <span>M2</span></div>
+      <div class="logo-sub">Performance Analyser</div>
+    </div>
+ 
+    <div>
+      <div class="nav-label">API Connection</div>
+      <div class="api-status">
+        <span class="status-dot" id="statusDot"></span>
+        <span id="statusText">Not connected</span>
+      </div>
+      <input
+        class="api-url-input"
+        type="text"
+        id="apiUrl"
+        value="http://localhost:8000"
+        placeholder="http://localhost:8000"
+      />
+      <button class="btn btn-ghost" style="width:100%; margin-top:8px; font-size:12px;" onclick="checkHealth()">
+        Test Connection
+      </button>
+    </div>
+ 
+    <div>
+      <div class="nav-label">Quick Fill</div>
+      <button class="btn btn-ghost" style="width:100%; font-size:12px;" onclick="loadSample()">
+        Load Sample Data
+      </button>
+    </div>
+ 
+    <div style="margin-top:auto;">
+      <div class="nav-label">Model 2 Files</div>
+      <div style="font-size:11px; color:var(--muted); line-height:2;">
+        model2_performance_analyzer.py<br>
+        model2_api.py<br>
+        database.py<br>
+        config.py<br>
+        requirements.txt<br>
+        test_model2.py
+      </div>
+    </div>
+  </aside>
+ 
+  <!-- ── Main ── -->
+  <main class="main">
+ 
+    <div class="page-header">
+      <div class="page-title">Student Performance Dashboard</div>
+      <div class="page-sub">Paste student CBT records below and click Analyse to generate insights.</div>
+    </div>
+ 
+    <!-- Error bar -->
+    <div class="error-bar" id="errorBar"></div>
+ 
+    <!-- Input card -->
+    <div class="input-card">
+      <div class="card-title">Input — CBT Records (JSON)</div>
+ 
+      <div class="input-row">
+        <div class="field-group">
+          <span class="field-label">Student ID</span>
+          <input type="text" id="studentId" placeholder="e.g. stu_001" value="stu_001"/>
+        </div>
+        <div class="field-group">
+          <span class="field-label">Student Name (optional)</span>
+          <input type="text" id="studentName" placeholder="e.g. Aryan Sharma"/>
+        </div>
+      </div>
+ 
+      <div class="field-group">
+        <span class="field-label">Records Array (JSON)</span>
+        <textarea id="recordsInput" placeholder='[
+  {"topic": "Thermodynamics", "is_correct": 1, "time_taken": 45, "test_id": 1},
+  {"topic": "Calculus", "is_correct": 0, "time_taken": 90, "test_id": 1}
+]'></textarea>
+      </div>
+ 
+      <div class="btn-row">
+        <button class="btn btn-primary" id="analyzeBtn" onclick="runAnalysis()">
+          Analyse
+        </button>
+        <button class="btn btn-ghost" onclick="clearAll()">Clear</button>
+        <button class="btn btn-ghost" onclick="toggleJson()">Toggle Raw JSON</button>
+      </div>
+ 
+      <div class="json-viewer" id="jsonViewer"></div>
+    </div>
+ 
+    <!-- Results -->
+    <div id="results">
+ 
+      <!-- Metrics -->
+      <div class="metrics-grid results-anim" id="metricsGrid"></div>
+ 
+      <!-- Charts row -->
+      <div class="charts-row results-anim" style="animation-delay:0.1s;">
+        <div class="card">
+          <div class="section-header">
+            <span class="section-title">Topic Accuracy</span>
+          </div>
+          <div id="topicList" class="topic-list"></div>
+        </div>
+ 
+        <div class="card">
+          <div class="section-header">
+            <span class="section-title">Performance Trend</span>
+            <span id="trendPill"></span>
+          </div>
+          <div style="position:relative; height:220px;">
+            <canvas id="trendChart"></canvas>
+          </div>
+        </div>
+      </div>
+ 
+      <!-- Tips -->
+      <div class="card results-anim" style="animation-delay:0.2s;">
+        <div class="section-header">
+          <span class="section-title">Improvement Suggestions</span>
+        </div>
+        <div class="tips-grid" id="tipsGrid"></div>
+      </div>
+ 
+    </div><!-- /results -->
+ 
+  </main>
+</div><!-- /app -->
+ 
+<script>
+  // ── Config ──────────────────────────────────────────────────────────────
+  let trendChartInstance = null;
+ 
+  const TIP_ICONS = ['🎯','📈','⚡','💡','🔁','✅'];
+  const TIP_COLORS = ['blue','green','red','amber','blue','green'];
+ 
+  const SAMPLE = [
+    {"topic":"Thermodynamics","is_correct":0,"time_taken":60,"test_id":1},
+    {"topic":"Thermodynamics","is_correct":1,"time_taken":40,"test_id":1},
+    {"topic":"Thermodynamics","is_correct":0,"time_taken":75,"test_id":1},
+    {"topic":"Calculus","is_correct":1,"time_taken":55,"test_id":1},
+    {"topic":"Calculus","is_correct":1,"time_taken":45,"test_id":1},
+    {"topic":"Optics","is_correct":0,"time_taken":90,"test_id":1},
+    {"topic":"Thermodynamics","is_correct":1,"time_taken":50,"test_id":2},
+    {"topic":"Calculus","is_correct":0,"time_taken":90,"test_id":2},
+    {"topic":"Calculus","is_correct":1,"time_taken":50,"test_id":2},
+    {"topic":"Mechanics","is_correct":1,"time_taken":35,"test_id":2},
+    {"topic":"Optics","is_correct":0,"time_taken":95,"test_id":2},
+    {"topic":"Thermodynamics","is_correct":1,"time_taken":45,"test_id":3},
+    {"topic":"Calculus","is_correct":1,"time_taken":40,"test_id":3},
+    {"topic":"Optics","is_correct":1,"time_taken":60,"test_id":3},
+    {"topic":"Mechanics","is_correct":1,"time_taken":28,"test_id":3},
+  ];
+ 
+  // ── Helpers ──────────────────────────────────────────────────────────────
+  function apiBase() {
+    return document.getElementById('apiUrl').value.replace(/\/$/, '');
+  }
+ 
+  function showError(msg) {
+    const el = document.getElementById('errorBar');
+    el.textContent = '⚠ ' + msg;
+    el.style.display = 'block';
+    setTimeout(() => el.style.display = 'none', 6000);
+  }
+ 
+  function setLoading(yes) {
+    const btn = document.getElementById('analyzeBtn');
+    btn.disabled = yes;
+    btn.innerHTML = yes
+      ? '<span class="loader"></span>Analysing...'
+      : 'Analyse';
+  }
+ 
+  function loadSample() {
+    document.getElementById('recordsInput').value = JSON.stringify(SAMPLE, null, 2);
+  }
+ 
+  function clearAll() {
+    document.getElementById('recordsInput').value = '';
+    document.getElementById('jsonViewer').style.display = 'none';
+    document.getElementById('results').classList.remove('visible');
+  }
+ 
+  function toggleJson() {
+    const el = document.getElementById('jsonViewer');
+    el.style.display = el.style.display === 'block' ? 'none' : 'block';
+  }
+ 
+  // ── Health check ─────────────────────────────────────────────────────────
+  async function checkHealth() {
+    const dot  = document.getElementById('statusDot');
+    const text = document.getElementById('statusText');
+    try {
+      const res = await fetch(apiBase() + '/health', { signal: AbortSignal.timeout(3000) });
+      if (res.ok) {
+        dot.className  = 'status-dot online';
+        text.textContent = 'Connected';
+        text.style.color = 'var(--green)';
+      } else { throw new Error(); }
+    } catch {
+      dot.className  = 'status-dot';
+      text.textContent = 'Offline';
+      text.style.color = 'var(--red)';
+    }
+  }
+ 
+  // ── Main analysis call ───────────────────────────────────────────────────
+  async function runAnalysis() {
+    const raw = document.getElementById('recordsInput').value.trim();
+    if (!raw) { showError('Please paste your JSON records first.'); return; }
+ 
+    let records;
+    try { records = JSON.parse(raw); }
+    catch { showError('Invalid JSON — please check the format.'); return; }
+ 
+    if (!Array.isArray(records) || records.length === 0) {
+      showError('Records must be a non-empty JSON array.'); return;
+    }
+ 
+    setLoading(true);
+ 
+    try {
+      const res = await fetch(apiBase() + '/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ records })
+      });
+ 
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.detail || `HTTP ${res.status}`);
+      }
+ 
+      const data = await res.json();
+      renderDashboard(data.json_report);
+ 
+      // Show raw JSON
+      const viewer = document.getElementById('jsonViewer');
+      viewer.textContent = JSON.stringify(data.json_report, null, 2);
+ 
+    } catch (e) {
+      showError('API Error: ' + e.message + '. Make sure uvicorn is running on the configured URL.');
+    } finally {
+      setLoading(false);
+    }
+  }
+ 
+  // ── Render ───────────────────────────────────────────────────────────────
+  function renderDashboard(r) {
+    renderMetrics(r);
+    renderTopics(r.topic_stats);
+    renderTrend(r.performance_trend, r.trend_direction);
+    renderTips(r.improvement_tips);
+    document.getElementById('results').classList.add('visible');
+    document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+ 
+  function renderMetrics(r) {
+    const acc     = (r.overall_accuracy * 100).toFixed(1);
+    const weakCnt = r.weak_topics.length;
+    const avgTime = r.topic_stats.length
+      ? (r.topic_stats.reduce((s,t) => s + t.avg_time_seconds, 0) / r.topic_stats.length).toFixed(0)
+      : '—';
+ 
+    document.getElementById('metricsGrid').innerHTML = `
+      <div class="metric-card blue">
+        <div class="metric-label">Overall Accuracy</div>
+        <div class="metric-value blue">${acc}%</div>
+        <div class="metric-sub">${r.total_questions} questions</div>
+      </div>
+      <div class="metric-card green">
+        <div class="metric-label">Tests Taken</div>
+        <div class="metric-value green">${r.total_tests}</div>
+        <div class="metric-sub">sessions analysed</div>
+      </div>
+      <div class="metric-card ${weakCnt > 0 ? 'red' : 'green'}">
+        <div class="metric-label">Weak Topics</div>
+        <div class="metric-value ${weakCnt > 0 ? 'red' : 'green'}">${weakCnt}</div>
+        <div class="metric-sub">${weakCnt > 0 ? r.weak_topics.join(', ') : 'None — great job!'}</div>
+      </div>
+      <div class="metric-card amber">
+        <div class="metric-label">Avg Time / Topic</div>
+        <div class="metric-value amber">${avgTime}s</div>
+        <div class="metric-sub">seconds per question</div>
+      </div>
+    `;
+  }
+ 
+  function renderTopics(topics) {
+    const html = topics.map(t => {
+      const pct   = (t.accuracy * 100).toFixed(0);
+      const color = t.accuracy >= 0.8 ? '#4f8ef7' : t.accuracy >= 0.5 ? '#34d399' : '#f87171';
+      const badge = t.accuracy < 0.5
+        ? '<span class="badge badge-weak">Weak</span>'
+        : t.accuracy >= 0.8
+        ? '<span class="badge badge-strong">Strong</span>'
+        : '<span class="badge badge-ok">OK</span>';
+ 
+      return `
+        <div class="topic-row">
+          <div class="topic-meta">
+            <span class="topic-name">${t.topic}</span>
+            <div class="topic-right">
+              <span class="topic-time">${t.avg_time_seconds}s avg</span>
+              <span class="topic-pct" style="color:${color}">${pct}%</span>
+              ${badge}
+            </div>
+          </div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:${pct}%; background:${color};"></div>
+          </div>
+        </div>
+      `;
+    }).join('');
+    document.getElementById('topicList').innerHTML = html;
+  }
+ 
+  function renderTrend(trend, direction) {
+    // Trend pill
+    const pillClass = `trend-pill trend-${direction}`;
+    const pillLabel = direction.replace('_', ' ');
+    const arrow = direction === 'improving' ? '↑' : direction === 'declining' ? '↓' : '→';
+    document.getElementById('trendPill').innerHTML =
+      `<span class="${pillClass}">${arrow} ${pillLabel}</span>`;
+ 
+    // Chart
+    if (trendChartInstance) { trendChartInstance.destroy(); }
+ 
+    const labels   = trend.map(t => `Test ${t.test_id}`);
+    const accData  = trend.map(t => +(t.accuracy * 100).toFixed(1));
+    const timeData = trend.map(t => +t.avg_time_seconds.toFixed(1));
+ 
+    trendChartInstance = new Chart(document.getElementById('trendChart'), {
+      data: {
+        labels,
+        datasets: [
+          {
+            type: 'line',
+            label: 'Accuracy %',
+            data: accData,
+            borderColor: '#4f8ef7',
+            backgroundColor: 'rgba(79,142,247,0.08)',
+            tension: 0.4,
+            pointRadius: 5,
+            pointBackgroundColor: '#4f8ef7',
+            fill: true,
+            yAxisID: 'y'
+          },
+          {
+            type: 'bar',
+            label: 'Avg Time (s)',
+            data: timeData,
+            backgroundColor: 'rgba(251,191,36,0.2)',
+            borderColor: '#fbbf24',
+            borderWidth: 1,
+            yAxisID: 'y2'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          y: {
+            position: 'left',
+            min: 0, max: 110,
+            ticks: { color: '#4f8ef7', font: { size: 11 }, callback: v => v + '%' },
+            grid: { color: 'rgba(255,255,255,0.04)' }
+          },
+          y2: {
+            position: 'right',
+            min: 0,
+            ticks: { color: '#fbbf24', font: { size: 11 }, callback: v => v + 's' },
+            grid: { display: false }
+          },
+          x: {
+            ticks: { color: '#6b7280', font: { size: 11 } },
+            grid: { color: 'rgba(255,255,255,0.04)' }
+          }
+        }
+      }
+    });
+  }
+ 
+  function renderTips(tips) {
+    const html = tips.map((tip, i) => `
+      <div class="tip-item">
+        <div class="tip-icon ${TIP_COLORS[i % TIP_COLORS.length]}">${TIP_ICONS[i % TIP_ICONS.length]}</div>
+        <div class="tip-text">${tip}</div>
+      </div>
+    `).join('');
+    document.getElementById('tipsGrid').innerHTML = html;
+  }
+ 
+  // ── Init ─────────────────────────────────────────────────────────────────
+  checkHealth();
+</script>
+</body>
+</html>
+ 
