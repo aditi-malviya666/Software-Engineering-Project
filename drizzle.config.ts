@@ -6,13 +6,7 @@ export default defineConfig({
   schema: "./src/db/schema/*",
   dialect: "postgresql",
   dbCredentials: {
-    // url: process.env.DATABASE_URL!,
-    host: "localhost",
-    database: process.env.POSTGRES_DB!,
-    port: +process.env.POSTGRES_PORT!,
-    user: process.env.POSTGRES_USER!,
-    password: process.env.POSTGRES_PASSWORD!,
-    ssl: false,
+    url: process.env.DATABASE_URL || `postgresql://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@${process.env.DB_HOST || "localhost"}:${process.env.POSTGRES_PORT || 5432}/${process.env.POSTGRES_DB}`,
   },
   migrations: {
     table: "my-migrations-table", // `__drizzle_migrations` by default

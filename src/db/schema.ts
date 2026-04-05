@@ -1,14 +1,11 @@
 import postgres from "postgres";
 import { drizzle } from "drizzle-orm/postgres-js";
 
-const pool = postgres({
+const connectionString = process.env.DATABASE_URL || `postgresql://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@${process.env.DB_HOST || "localhost"}:${process.env.POSTGRES_PORT || 5432}/${process.env.POSTGRES_DB}`;
+
+const pool = postgres(connectionString, {
   max: 1,
   ssl: false,
-  host: "localhost",
-  database: process.env.POSTGRES_DB!,
-  port: +process.env.POSTGRES_PORT!,
-  user: process.env.POSTGRES_USER!,
-  password: process.env.POSTGRES_PASSWORD!,
 });
 
 // export const db = drizzle(pool);
