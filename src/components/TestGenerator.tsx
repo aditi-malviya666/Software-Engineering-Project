@@ -154,7 +154,10 @@ export default function TestGenerator() {
     };
   }, [appState, userAnswers, questions]);
 
-  const formatTime = (seconds: number | null) => {
+  /**
+   * Formats the given time in seconds into a human-readable HH:MM:SS or MM:SS string.
+   */
+  const formatTime = (seconds: number | null): string => {
     if (seconds === null) return "";
     const h = Math.floor(seconds / 3600);
     const m = Math.floor((seconds % 3600) / 60);
