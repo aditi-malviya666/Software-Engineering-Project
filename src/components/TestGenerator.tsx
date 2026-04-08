@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 
 type AppState = "setup" | "generating" | "ready" | "testing" | "results";
+export type ExamType = "JEE" | "NEET" | "CUET" | "GATE";
 
 export interface Question {
   question: string;
@@ -22,7 +23,7 @@ export interface ScoreData {
 
 export default function TestGenerator() {
   const [apiKey, setApiKey] = useState("");
-  const [examName, setExamName] = useState("JEE");
+  const [examName, setExamName] = useState<ExamType>("JEE");
   const [generationType, setGenerationType] = useState("Topic Wise");
   const [subject, setSubject] = useState("");
   const [difficulty, setDifficulty] = useState("actual experience as in actual paper");
