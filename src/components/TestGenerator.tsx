@@ -27,6 +27,12 @@ export default function TestGenerator() {
   const [appState, setAppState] = useState<AppState>("setup");
   const [questions, setQuestions] = useState<any[]>([]);
   const [error, setError] = useState("");
+  const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved" | "error">(
+    "idle",
+  );
+  const [initialTestDurationSeconds, setInitialTestDurationSeconds] = useState<
+    number | null
+  >(null);
   
   const [userAnswers, setUserAnswers] = useState<Record<number, string>>({});
   const [scoreData, setScoreData] = useState({ marks: 0, correct: 0, incorrect: 0, unattempted: 0, correctMark: 4, incorrectMark: 1, maxMarks: 20 });
@@ -83,6 +89,7 @@ export default function TestGenerator() {
 
     setAppState("testing");
     setUserAnswers({});
+    setSaveStatus("idle");
     
     let totalSeconds = 0;
     const qCount = questions.length;
@@ -101,6 +108,7 @@ export default function TestGenerator() {
     }
     
     setTimeLeft(totalSeconds);
+    setInitialTestDurationSeconds(totalSeconds);
   };
 
   useEffect(() => {
@@ -110,7 +118,7 @@ export default function TestGenerator() {
       }, 1000);
       return () => clearTimeout(timerId);
     } else if (appState === "testing" && timeLeft === 0) {
-      submitTest();
+      void submitTest();
     }
   }, [timeLeft, appState]);
 
@@ -119,13 +127,13 @@ export default function TestGenerator() {
 
     const handleVisibilityChange = () => {
       if (document.visibilityState === "hidden") {
-        submitTest();
+        void submitTest();
       }
     };
 
     const handleFullscreenChange = () => {
       if (!document.fullscreenElement) {
-        submitTest();
+        void submitTest();
       }
     };
 
@@ -155,7 +163,43 @@ export default function TestGenerator() {
     setUserAnswers(prev => ({ ...prev, [qIndex]: optionValue }));
   };
 
-  const submitTest = () => {
+  const persistAttempt = async (payload: {
+    examName: string;
+    generationType: string;
+    subject: string;
+    difficulty: string;
+    timeTakenSeconds: number;
+    scoring: {
+      correctMark: number;
+      incorrectMark: number;
+    };
+    questions: {
+      questionText: string;
+      options: string[];
+      correctAnswer: string;
+      selectedAnswer: string | null;
+      timeTakenSeconds?: number;
+    }[];
+  }) => {
+    try {
+      setSaveStatus("saving");
+      const res = await fetch("/api/tests/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data?.error || "Failed to store test analytics.");
+      }
+      setSaveStatus("saved");
+    } catch (persistError) {
+      console.error("Persist attempt failed", persistError);
+      setSaveStatus("error");
+    }
+  };
+
+  const submitTest = async () => {
     let marks = 0;
     let correct = 0;
     let incorrect = 0;
@@ -202,6 +246,32 @@ export default function TestGenerator() {
       maxMarks: questions.length * correctMark
     });
     setAppState("results");
+
+    const totalDurationSeconds = initialTestDurationSeconds ?? questions.length * 120;
+    const timeTakenSeconds = Math.max(
+      0,
+      totalDurationSeconds - Math.max(timeLeft ?? 0, 0),
+    );
+    const normalizedSubject = subject.trim().length > 0 ? subject.trim() : "General";
+    const payloadQuestions = questions.map((question, index) => ({
+      questionText: question.question || `Generated Question ${index + 1}`,
+      options: Array.isArray(question.options) ? question.options : [],
+      correctAnswer: question.correctAnswer || "",
+      selectedAnswer: userAnswers[index] || null,
+    }));
+
+    void persistAttempt({
+      examName,
+      generationType,
+      subject: normalizedSubject,
+      difficulty,
+      timeTakenSeconds,
+      scoring: {
+        correctMark,
+        incorrectMark,
+      },
+      questions: payloadQuestions,
+    });
     
     if (document.fullscreenElement) {
       document.exitFullscreen().catch(err => console.warn("Exit fullscreen failed", err));
@@ -213,6 +283,8 @@ export default function TestGenerator() {
     setQuestions([]);
     setUserAnswers({});
     setTimeLeft(null);
+    setSaveStatus("idle");
+    setInitialTestDurationSeconds(null);
   };
 
   return (
@@ -418,6 +490,14 @@ export default function TestGenerator() {
              <button onClick={resetGenerator} className="relative z-10 py-4 px-10 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold transition-all shadow-xl shadow-indigo-600/20 active:scale-[0.98]">
                Generate A New Test
              </button>
+             {saveStatus !== "idle" && (
+              <p className="mt-4 text-sm text-slate-600 dark:text-slate-300 relative z-10">
+                {saveStatus === "saving" && "Saving your attempt analytics..."}
+                {saveStatus === "saved" && "Attempt synced. Analysis page is now updated."}
+                {saveStatus === "error" &&
+                  "Attempt save failed. Your result is visible, but analytics may not update for this run."}
+              </p>
+             )}
            </div>
 
            <div className="space-y-8">
