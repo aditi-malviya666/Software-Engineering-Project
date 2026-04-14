@@ -1,8 +1,9 @@
 """
 api.py — TCAS Model 2 inference endpoint
-"""
 
+"""
 from __future__ import annotations
+from fetch_results import get_results_by_session
 
 import pickle
 import traceback
@@ -184,7 +185,80 @@ def health_check() -> HealthResponse:
         min_sessions_required=MIN_SESSIONS,
     )
 
+@app.get("/api/v1/analyse-db/{session_id}", tags=["Inference"])
+def analyse_from_db(session_id: str):
+    # ── STEP 1: FETCH FROM POSTGRES (M1) ─────────────────────
+    attempts = get_results_by_session(session_id)
 
+    if not attempts:
+        raise HTTPException(status_code=404, detail="No data found in DB")
+
+    # ── STEP 2: CONVERT DB → MODEL FORMAT ────────────────────
+    formatted_attempts = [
+        {
+            "test_session_id": a["session_id"],
+            "is_correct": 1 if a["marks_awarded"] > 0 else 0,
+            "time_taken_seconds": a["time_taken"],
+            "topic_tag": "general"
+        }
+        for a in attempts
+    ]
+
+    # Convert to your Pydantic model (reusing existing pipeline)
+    attempt_objects = [TestAttempt(**a) for a in formatted_attempts]
+
+    # ── STEP 3: FEATURE ENGINEERING (YOUR EXISTING LOGIC) ───
+    feature_row, weak_topics, topic_accuracies, session_count = _engineer_features(
+        attempt_objects
+    )
+
+    avg_accuracy = float(feature_row["avg_accuracy"].iloc[0])
+    moving_avg_latency = float(feature_row["moving_avg_latency"].iloc[0])
+    trend_slope = float(feature_row["trend_slope"].iloc[0])
+
+    # ── STEP 4: RANDOM FOREST PREDICTION ─────────────────────
+    rf_label = str(RF_PIPELINE.predict(feature_row)[0])
+
+    print(f"🤖 RF: {rf_label} | Weak Topics: {weak_topics}")
+
+    # ── STEP 5: LLM (OLLAMA) ─────────────────────────────────
+    try:
+        qi = QualitativeInput(
+            rf_label=rf_label,
+            weak_topics=weak_topics if weak_topics else ["General"],
+            student_id=0,  # DB mode, no direct student_id needed
+            avg_accuracy=avg_accuracy,
+        )
+
+        qual: QualitativeOutput = generate_qualitative_analysis(qi)
+
+        summary = qual.summary
+        study_tips = qual.study_tips
+        model_used = qual.model_used
+
+    except Exception as exc:
+        print(f"❌ Ollama error: {exc}")
+
+        summary = f"Student classified as '{rf_label}' with {round(avg_accuracy*100)}% accuracy."
+        study_tips = [
+            f"Focus on {weak_topics[0]} with practice questions.",
+            "Revise concepts using spaced repetition."
+        ]
+        model_used = "fallback"
+
+    # ── STEP 6: FINAL RESPONSE ───────────────────────────────
+    return {
+        "session_id": session_id,
+        "rf_label": rf_label,
+        "avg_accuracy": avg_accuracy,
+        "moving_avg_latency": moving_avg_latency,
+        "trend_slope": trend_slope,
+        "weak_topics": weak_topics,
+        "topic_accuracies": topic_accuracies,
+        "summary": summary,
+        "study_tips": study_tips,
+        "model_used": model_used,
+    }
 @app.post("/api/v1/analyse", response_model=AnalyseResponse, tags=["Inference"])
 def analyse(request: AnalyseRequest) -> AnalyseResponse:
     if RF_PIPELINE is None:
