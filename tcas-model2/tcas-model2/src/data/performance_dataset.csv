@@ -1,0 +1,201 @@
+student_id,avg_accuracy,n_sessions,moving_avg_latency,trend_slope,performance_label
+1,0.2,3,102.73,-0.05,Needs Improvement
+2,0.3077,3,70.59,0.15,Needs Improvement
+3,0.2778,2,82.56,0.4,Needs Improvement
+4,0.2222,2,103.71,-0.175,Needs Improvement
+5,0.6296,3,66.82,-0.014286,Stable
+6,0.2778,2,85.04,0.175,Needs Improvement
+7,0.2273,3,82.61,0.15,Needs Improvement
+8,0.9259,3,83.67,-0.142857,Excellent
+9,0.2903,4,99.97,-0.09,Needs Improvement
+10,0.619,3,75.04,-0.3,Stable
+11,0.3462,3,85.33,-0.083333,Needs Improvement
+12,0.4286,3,77.91,0.0,Needs Improvement
+13,0.2857,3,101.49,-0.2,Needs Improvement
+14,0.7,3,86.67,-0.1,Excellent
+15,0.4091,3,90.17,0.05,Needs Improvement
+16,0.25,2,69.33,-0.4,Needs Improvement
+17,0.75,2,100.45,0.3,Excellent
+18,0.8462,3,59.95,-0.066667,Excellent
+19,0.5806,4,62.96,0.07,Stable
+20,0.4706,4,109.3,0.03,Stable
+21,0.8276,3,70.02,-0.066667,Excellent
+22,0.3929,3,75.43,0.05,Needs Improvement
+23,0.5385,3,81.09,-0.05,Stable
+24,0.75,3,90.09,-0.0875,Excellent
+25,0.3846,3,77.67,-0.083333,Needs Improvement
+26,0.6333,3,89.48,-0.1,Stable
+27,0.7241,3,82.96,0.144444,Excellent
+28,0.92,3,58.31,-0.05,Excellent
+29,0.24,3,74.42,-0.2,Needs Improvement
+30,0.6667,3,65.37,0.05,Stable
+31,0.8824,4,76.94,0.02,Excellent
+32,0.7143,3,70.12,-0.4,Excellent
+33,0.5667,3,81.38,-0.1,Stable
+34,0.8929,3,85.43,0.1,Excellent
+35,0.5909,3,67.42,-0.05,Stable
+36,0.4828,3,75.46,0.027778,Stable
+37,0.8571,3,88.39,0.0,Excellent
+38,0.7143,4,74.38,0.0,Excellent
+39,0.32,3,94.8,-0.2,Needs Improvement
+40,0.5161,4,102.36,0.15,Stable
+41,0.7308,3,69.48,0.033333,Excellent
+42,0.7,2,74.94,0.4,Excellent
+43,0.7,2,79.89,0.0,Excellent
+44,0.25,2,90.31,-0.1,Needs Improvement
+45,0.8636,3,89.02,0.1,Excellent
+46,0.6667,3,65.2,0.2,Stable
+47,0.6,2,63.01,0.2,Stable
+48,0.2593,3,78.2,0.092857,Needs Improvement
+49,0.8,3,73.73,-0.1,Excellent
+50,0.4333,3,110.0,-0.2,Needs Improvement
+51,0.3158,2,81.8,0.244444,Needs Improvement
+52,0.087,3,97.43,0.116667,Needs Improvement
+53,0.25,3,78.57,-0.1375,Needs Improvement
+54,0.3636,3,88.71,0.1,Needs Improvement
+55,0.7727,3,83.61,-0.1,Excellent
+56,0.2273,3,110.95,0.2,Needs Improvement
+57,0.75,3,84.28,-0.025,Excellent
+58,0.6667,4,89.77,-0.13,Stable
+59,0.55,2,77.65,-0.1,Stable
+60,0.7778,3,91.15,-0.114286,Excellent
+61,0.4828,3,99.93,0.138889,Stable
+62,0.8214,3,63.39,-0.125,Excellent
+63,0.25,3,95.26,-0.15,Needs Improvement
+64,0.6087,3,86.6,0.2,Stable
+65,0.5667,3,72.66,0.05,Stable
+66,0.6786,3,99.42,-0.15,Stable
+67,0.0,3,102.33,0.0,Needs Improvement
+68,0.871,4,63.11,-0.31,Excellent
+69,0.4333,3,101.98,-0.1,Needs Improvement
+70,0.1667,3,89.49,-0.1,Needs Improvement
+71,0.7333,2,70.35,0.1,Excellent
+72,0.8889,2,95.7,-0.025,Excellent
+73,0.2609,3,97.32,-0.1,Needs Improvement
+74,0.4138,3,85.22,0.072222,Needs Improvement
+75,0.48,3,89.13,-0.05,Stable
+76,0.0455,3,66.91,-0.05,Needs Improvement
+77,0.3043,3,83.51,0.016667,Needs Improvement
+78,0.3158,2,80.51,-0.177778,Needs Improvement
+79,0.1852,3,104.44,-0.15,Needs Improvement
+80,1.0,2,88.98,0.0,Excellent
+81,0.6,3,81.38,0.15,Stable
+82,0.6364,3,84.84,-0.05,Stable
+83,0.6,3,72.16,0.2,Stable
+84,0.9375,4,84.97,0.0,Excellent
+85,0.3478,3,80.97,0.066667,Needs Improvement
+86,0.5789,2,84.03,0.377778,Stable
+87,0.5333,3,69.9,0.05,Stable
+88,0.5926,3,85.63,0.057143,Stable
+89,0.7391,3,68.29,0.25,Excellent
+90,0.3158,4,97.05,-0.1325,Needs Improvement
+91,0.1875,4,70.35,-0.02,Needs Improvement
+92,0.4545,3,65.39,0.0,Stable
+93,0.5862,3,88.67,0.188889,Stable
+94,0.3333,3,82.07,0.05,Needs Improvement
+95,0.6818,3,66.46,0.15,Stable
+96,0.3226,4,92.01,0.21,Needs Improvement
+97,0.5,2,80.85,-0.225,Stable
+98,0.8889,2,62.49,0.2,Excellent
+99,0.4615,3,83.29,-0.266667,Stable
+100,0.2917,3,81.71,-0.075,Needs Improvement
+101,0.7931,3,72.89,-0.005556,Excellent
+102,0.2414,3,73.47,0.011111,Needs Improvement
+103,0.8125,2,69.69,0.033333,Excellent
+104,0.5769,3,94.33,0.116667,Stable
+105,0.1875,4,82.28,-0.04,Needs Improvement
+106,0.963,3,71.38,-0.071429,Excellent
+107,0.6216,4,76.29,-0.217143,Stable
+108,0.92,3,86.28,0.05,Excellent
+109,0.08,3,87.71,0.1,Needs Improvement
+110,0.2727,3,97.93,-0.25,Needs Improvement
+111,0.5714,3,97.36,-0.1625,Stable
+112,0.5714,3,91.49,-0.3,Stable
+113,0.6957,3,96.98,0.1,Stable
+114,0.2083,3,103.93,0.125,Needs Improvement
+115,0.8261,3,75.27,-0.333333,Excellent
+116,0.3529,2,86.36,0.371429,Needs Improvement
+117,0.32,3,98.15,-0.05,Needs Improvement
+118,1.0,3,87.7,0.0,Excellent
+119,0.8182,3,56.18,0.05,Excellent
+120,0.6667,3,75.11,0.2,Stable
+121,0.381,3,93.91,-0.2,Needs Improvement
+122,0.619,3,98.9,0.25,Stable
+123,0.4194,4,72.94,0.2,Needs Improvement
+124,0.7692,3,88.87,-0.116667,Excellent
+125,0.7222,2,61.98,0.05,Excellent
+126,0.3478,3,75.43,0.183333,Needs Improvement
+127,0.6552,3,76.69,0.088889,Stable
+128,1.0,3,95.31,0.0,Excellent
+129,0.5625,2,65.92,0.166667,Stable
+130,0.25,2,87.58,-0.133333,Needs Improvement
+131,0.3226,4,67.21,0.17,Needs Improvement
+132,0.5833,3,52.79,-0.1,Stable
+133,0.45,2,107.28,-0.1,Stable
+134,0.3889,2,89.02,-0.025,Needs Improvement
+135,0.68,3,64.82,0.15,Stable
+136,0.05,2,102.06,0.1,Needs Improvement
+137,0.381,3,77.96,0.3,Needs Improvement
+138,0.4,2,84.06,0.2,Needs Improvement
+139,0.0526,2,110.28,-0.1,Needs Improvement
+140,0.3333,3,88.4,-0.2,Needs Improvement
+141,0.2778,2,81.95,0.175,Needs Improvement
+142,0.625,3,80.16,-0.1,Stable
+143,0.4583,3,102.08,0.1,Stable
+144,0.3913,3,84.98,0.016667,Needs Improvement
+145,0.8889,3,72.32,-0.142857,Excellent
+146,0.8519,3,70.25,-0.042857,Excellent
+147,0.4333,3,97.09,0.15,Needs Improvement
+148,0.4545,4,97.55,-0.19,Stable
+149,0.45,2,81.76,-0.1,Stable
+150,0.5312,4,61.35,0.07,Stable
+151,0.2,3,84.82,0.1,Needs Improvement
+152,0.8519,3,68.14,0.1,Excellent
+153,0.8235,4,83.72,-0.025,Excellent
+154,0.2857,3,78.57,-0.1,Needs Improvement
+155,0.5588,4,68.76,0.07,Stable
+156,0.44,3,94.48,0.05,Needs Improvement
+157,0.2,3,98.36,0.0,Needs Improvement
+158,0.85,2,92.14,0.1,Excellent
+159,0.0833,3,80.91,-0.05,Needs Improvement
+160,0.4,3,91.2,-0.3,Needs Improvement
+161,0.875,4,62.35,0.04,Excellent
+162,0.7273,3,93.5,0.15,Excellent
+163,0.6154,2,80.76,-0.366667,Stable
+164,0.5,2,76.12,0.225,Stable
+165,0.35,2,93.89,0.3,Needs Improvement
+166,0.5172,3,108.73,-0.288889,Stable
+167,0.1304,3,81.34,0.116667,Needs Improvement
+168,0.4483,3,55.07,0.133333,Needs Improvement
+169,0.8,3,66.89,0.2,Excellent
+170,0.375,4,95.53,0.0,Needs Improvement
+171,0.6,4,90.52,-0.02,Stable
+172,0.6154,3,84.7,0.083333,Stable
+173,0.6786,3,76.22,0.1125,Stable
+174,0.3333,2,100.34,-0.6,Needs Improvement
+175,0.85,2,80.01,0.1,Excellent
+176,0.5238,3,103.26,0.2,Stable
+177,0.7368,2,68.08,0.077778,Excellent
+178,0.7727,3,82.9,-0.1,Excellent
+179,0.7143,3,52.51,0.05,Excellent
+180,0.3333,3,89.11,-0.2,Needs Improvement
+181,0.7895,2,91.63,-0.022222,Excellent
+182,0.1429,3,90.72,-0.1,Needs Improvement
+183,0.9412,2,74.99,-0.142857,Excellent
+184,0.5185,3,79.1,0.035714,Stable
+185,0.1143,4,104.06,0.01,Needs Improvement
+186,0.375,4,108.38,-0.06,Needs Improvement
+187,0.2143,3,93.24,0.1375,Needs Improvement
+188,0.1562,4,111.92,-0.05,Needs Improvement
+189,0.7778,2,64.64,-0.05,Excellent
+190,0.5172,3,58.09,-0.077778,Stable
+191,0.45,2,78.71,0.1,Stable
+192,0.4167,3,71.26,-0.175,Needs Improvement
+193,0.1613,4,80.88,-0.03,Needs Improvement
+194,0.6154,3,65.12,0.0,Stable
+195,0.8261,3,54.66,-0.066667,Excellent
+196,0.4286,3,96.51,-0.0625,Needs Improvement
+197,0.5714,3,77.07,0.1125,Stable
+198,0.4483,3,95.06,0.072222,Needs Improvement
+199,0.4828,3,79.4,0.022222,Stable
+200,0.5,3,68.91,0.05,Stable
