@@ -35,6 +35,9 @@ const createSamplePaper = async () => {
     timeLimit: 60,
     createdAt: new Date(Date.now()),
     userId: demoUser.id,
+    subject: "Mathematics",
+    difficulty: "Medium",
+    generationType: "manual",
   };
 
   const [sampleQuestionPaper] = await db
