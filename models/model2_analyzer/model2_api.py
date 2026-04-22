@@ -1,7 +1,7 @@
 """
-model2_api.py — TCAS Model 2 API (Merged: Vishal + Keshav)
+model2_api.py — TCAS Model 2 API ( Keshav)
 ──────────────────────────────────────────────────────────
-Stats engine  : model2_performance_analyzer.py  (Vishal)
+Stats engine  : model2_performance_analyzer.py  
 RF + Ollama   : model2_bridge.py                (Keshav)
 """
 
@@ -53,9 +53,9 @@ class AnalyzeRequest(BaseModel):
 @app.get("/")
 def root():
     return {
-        "message": "TCAS Model 2 API (Merged) is running 🚀",
+        "message": "TCAS Model 2 API (Merged) is running ",
         "docs": "/docs",
-        "version": "2.0.0 — Stats (Vishal) + RF/Ollama (Keshav)"
+        "version": "2.0.0 — Stats  + RF/Ollama "
     }
 
 
