@@ -24,6 +24,9 @@ COPY next.config.ts .
 COPY tsconfig.json .
 COPY postcss.config.mjs .
 COPY drizzle.config.ts .
+COPY tailwind.config.ts .
+COPY routes.ts .
+COPY hero.ts .
 
 # Environment variables must be present at build time
 # https://github.com/vercel/next.js/discussions/14030
@@ -45,6 +48,16 @@ RUN \
   fi
 
 # Note: It is not necessary to add an intermediate step that does a full copy of `node_modules` here
+
+# Step 3. Migration image
+FROM builder AS migration
+WORKDIR /app
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/drizzle.config.ts ./drizzle.config.ts
+COPY --from=builder /app/src/db/schema ./src/db/schema
+
+CMD ["sh", "-c", "corepack enable pnpm && pnpm drizzle-kit push"]
 
 # Step 2. Production image, copy all the files and run next
 FROM base AS runner
