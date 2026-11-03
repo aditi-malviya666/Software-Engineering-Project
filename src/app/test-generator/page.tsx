@@ -2,7 +2,7 @@ import TestGenerator from "@/components/TestGenerator";
 
 export default function TestGeneratorPage() {
   return (
-    <div className="min-h-screen bg-slate-100 dark:bg-slate-950/80 py-16 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#FBFBFE] dark:bg-[#15161E] py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
       <TestGenerator />
     </div>
   );

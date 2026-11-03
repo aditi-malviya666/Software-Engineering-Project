@@ -3,3 +3,57 @@
 /* Note: You may need to change the path to fit your project structure */
 @source '../../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}';
 @custom-variant dark (&:is(.dark *));
+
+/* ── TCAS Warm PW-Inspired Design System ─────────────────────────────── */
+:root {
+  --tcas-bg: #FBFBFE;
+  --tcas-surface: #FFFFFF;
+  --tcas-surface-hover: #F8F7FD;
+  --tcas-border: #E8E6F0;
+  --tcas-border-strong: #D6D2E6;
+  --tcas-text: #2B283A;
+  --tcas-text-secondary: #6B677F;
+  --tcas-primary: #6C5CE7;
+  --tcas-primary-soft: #F2EFFF;
+  --tcas-blue: #3B82F6;
+  --tcas-blue-soft: #EFF6FF;
+  --tcas-orange: #F97316;
+  --tcas-orange-soft: #FFF7ED;
+  --tcas-pink: #F43F5E;
+  --tcas-pink-soft: #FFF1F2;
+  --tcas-amber: #F59E0B;
+  --tcas-amber-soft: #FFFBEB;
+  --tcas-purple: #8B5CF6;
+  --tcas-purple-soft: #FAF5FF;
+  --tcas-green: #10B981;
+  --tcas-green-soft: #ECFDF5;
+}
+
+.dark {
+  --tcas-bg: #15161E;
+  --tcas-surface: #20212E;
+  --tcas-surface-hover: #292A3C;
+  --tcas-border: #323447;
+  --tcas-border-strong: #444760;
+  --tcas-text: #F1EFF8;
+  --tcas-text-secondary: #9B98AE;
+  --tcas-primary: #9B8DF7;
+  --tcas-primary-soft: #282447;
+  --tcas-blue: #60A5FA;
+  --tcas-blue-soft: #182438;
+  --tcas-orange: #FB923C;
+  --tcas-orange-soft: #332219;
+  --tcas-pink: #FB7185;
+  --tcas-pink-soft: #331A24;
+  --tcas-amber: #FBBF24;
+  --tcas-amber-soft: #332B16;
+  --tcas-purple: #A78BFA;
+  --tcas-purple-soft: #271E3A;
+  --tcas-green: #34D399;
+  --tcas-green-soft: #162E25;
+}
+
+body {
+  background-color: var(--tcas-bg);
+  color: var(--tcas-text);
+}

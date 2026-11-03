@@ -55,7 +55,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark bg-slate-950 text-slate-100">
+    <html lang="en" className="bg-white text-slate-800">
       <body className={`${manrope.className} antialiased`}>
         <Providers>{children}</Providers>
       </body>
