@@ -485,7 +485,7 @@ export default function AnalysisPage() {
             className="font-semibold text-xs border-[#6C5CE7] text-[#6C5CE7] dark:text-[#a99bf5] dark:border-[#6C5CE7]/60 hover:bg-[#6C5CE7]/10"
             isLoading={isAnalyzing}
             startContent={<ArrowsClockwiseIcon size={14} />}
-            onPress={handleRunAnalysis}
+            onPress={() => handleRunAnalysis()}
           >
             Re-run ML Inference
           </Button>
